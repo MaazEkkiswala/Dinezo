@@ -2,32 +2,31 @@
 
 import { useState } from 'react'
 
-import { Label } from '@renderer/components/ui/label'
 import DzButton from '@renderer/components/dzButton'
-import { MenuItem, OrderItem } from './type'
-import { categories, menuItems } from './data/menuData'
 import DzSearchInput from '@renderer/components/dzSearchInput'
+import { Label } from '@renderer/components/ui/label'
+import { isEmpty } from 'lodash'
+import { categories, menuItems } from './data/menuData'
 import CurrentOrder from './order/currentOrder'
+import { IMenuItem, IOrderItem } from './type'
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('Best seller menu')
-  const [cart, setCart] = useState<OrderItem[]>([])
+  const [cart, setCart] = useState<IOrderItem[]>([])
   const [search, setSearch] = useState<string>('')
 
-  const toggleAdd = (item: MenuItem) => {
+  const toggleAdd = (item: IMenuItem) => {
     setCart((prev) => {
       const exists = prev.find((i) => i.id === item.id)
       if (exists) {
-        // if already in cart → remove it
         return prev.filter((i) => i.id !== item.id)
       } else {
-        // add to cart
         return [...prev, { ...item, qty: 1 }]
       }
     })
   }
 
-  const filteredItems: MenuItem[] = menuItems.filter(
+  const filteredItems: IMenuItem[] = menuItems.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) &&
       (selectedCategory === 'Best seller menu' || item.category === selectedCategory)
@@ -91,11 +90,10 @@ export default function Home() {
                   {/* Add / Remove Button */}
                   <DzButton
                     onClick={() => toggleAdd(item)}
-                    className={`mt-3 w-full py-2 rounded-lg font-medium ${
-                      inCart
-                        ? 'bg-primary-600 text-white'
-                        : 'border border-primary-600 text-black bg-white hover:bg-primary-400'
-                    }`}
+                    className={`mt-3 w-full py-2 rounded-lg font-medium ${inCart
+                      ? 'bg-primary-600 text-white'
+                      : 'border border-primary-600 text-black bg-white hover:bg-primary-400'
+                      }`}
                     label={inCart ? 'Added' : 'Add'}
                   />
                 </div>
@@ -105,9 +103,11 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="w-[20%]">
-        <CurrentOrder items={cart} />
-      </div>
+      {!isEmpty(cart) ? (
+        <div className="w-[25%]">
+          <CurrentOrder items={cart} onCartChange={(_cart) => setCart(_cart)} />
+        </div>
+      ) : null}
     </div>
   )
 }

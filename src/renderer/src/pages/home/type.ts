@@ -1,9 +1,9 @@
-export interface Category {
+export interface ICategory {
   id: number
   name: string
 }
 
-export interface MenuItem {
+export interface IMenuItem {
   id: number
   name: string
   price: number
@@ -11,7 +11,7 @@ export interface MenuItem {
   category: string
 }
 
-export interface OrderItem extends MenuItem {
+export interface IOrderItem extends IMenuItem {
   qty: number
   discount?: number
 }

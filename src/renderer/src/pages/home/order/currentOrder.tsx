@@ -1,42 +1,65 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { Minus, Plus, Trash2 } from 'lucide-react'
-import { Label } from '@renderer/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/ui/card'
+import DzIconButton from '@renderer/components/dzIconButton'
 import { Button } from '@renderer/components/ui/button'
-import { Tabs, TabsList, TabsTrigger } from '@renderer/components/ui/tabs'
+import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/ui/card'
+import { Label } from '@renderer/components/ui/label'
 import { Separator } from '@renderer/components/ui/separator'
-import { OrderItem } from '../type'
+import { Tabs, TabsList, TabsTrigger } from '@renderer/components/ui/tabs'
+import { cloneDeep, filter, findIndex, reduce } from 'lodash'
+import { Minus, Plus, Trash2 } from 'lucide-react'
+import { IOrderItem } from '../type'
 
-interface CurrentOrderProps {
-  items: OrderItem[]
+interface ICurrentOrderProps {
+  items: IOrderItem[]
+
+  onCartChange: (cart: IOrderItem[]) => void
 }
 
-export default function CurrentOrder({ items }: CurrentOrderProps) {
+export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps) {
   const [orderItems, setOrderItems] = useState(items)
   // const [customerName, setCustomerName] = useState('')
 
   const updateQty = (id: number, change: number) => {
-    setOrderItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, qty: Math.max(1, item.qty + change) } : item))
-    )
+    const _orderItems = cloneDeep(orderItems)
+    const selectedItemIndex = findIndex(_orderItems, (orderItem: any) => orderItem.id === id)
+    if (selectedItemIndex > -1) {
+      _orderItems[selectedItemIndex].qty += change
+    }
+
+    setOrderItems(_orderItems)
+    onCartChange(_orderItems)
   }
 
   const removeItem = (id: number) => {
-    setOrderItems((prev) => prev.filter((item) => item.id !== id))
+    const _orderItems = filter(orderItems, (order) => order.id !== id)
+    setOrderItems(_orderItems)
+    onCartChange(_orderItems)
   }
 
   useEffect(() => {
-    console.log('items', items)
-    console.log('orderItems', orderItems)
-  }, [])
+    setOrderItems(items)
+  }, [items])
 
-  const subtotal = orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
-  const totalDiscount = orderItems.reduce((acc, item) => acc + (item.discount ?? 0) * item.qty, 0)
-  const tax = subtotal * 0.18
-  const grandTotal = subtotal + tax - totalDiscount
+  const { tax, grandTotal, subtotal, totalDiscount } = useMemo(() => {
+    const { subtotal, totalDiscount } = reduce(
+      orderItems,
+      (acc: any, currentItem: IOrderItem) => {
+        acc.subtotal += currentItem.price * currentItem.qty
+        acc.totalDiscount += (currentItem.discount ?? 0) * currentItem.qty
+
+        return acc
+      },
+      { subtotal: 0, totalDiscount: 0 }
+    )
+
+    const tax = subtotal * 0.18
+    const grandTotal = subtotal + tax - totalDiscount
+
+    return { tax, grandTotal, subtotal, totalDiscount }
+  }, [orderItems])
 
   return (
     <Card className="w-full h-full rounded-2xl shadow-md flex flex-col">
@@ -56,7 +79,6 @@ export default function CurrentOrder({ items }: CurrentOrderProps) {
           onChange={(e) => setCustomerName(e.target.value)}
         /> */}
 
-        {/* Tabs for Dine In / Take Away */}
         <Tabs defaultValue="dinein" className="w-full">
           <TabsList className="grid grid-cols-2 w-full">
             <TabsTrigger value="dinein">Dine In</TabsTrigger>
@@ -64,7 +86,6 @@ export default function CurrentOrder({ items }: CurrentOrderProps) {
           </TabsList>
         </Tabs>
 
-        {/* Items list */}
         <div className="space-y-4">
           {orderItems.map((item) => (
             <div key={item.id} className="flex justify-between items-center border-b pb-2">
@@ -73,16 +94,23 @@ export default function CurrentOrder({ items }: CurrentOrderProps) {
                 <Label className="text-xs text-gray-500">₹{item.price} each</Label>
               </div>
               <div className="flex items-center gap-2">
-                <Button size="icon" variant="outline" onClick={() => updateQty(item.id, -1)}>
-                  <Minus className="h-4 w-4" />
-                </Button>
+                <DzIconButton
+                  isDisabled={item.qty === 1}
+                  onClick={() => updateQty(item.id, -1)}
+                  icon={<Minus className="h-4 w-4" />}
+                />
+
                 <span>{item.qty}</span>
-                <Button size="icon" variant="outline" onClick={() => updateQty(item.id, 1)}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-                <Button size="icon" variant="ghost" onClick={() => removeItem(item.id)}>
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
+
+                <DzIconButton
+                  onClick={() => updateQty(item.id, 1)}
+                  icon={<Plus className="h-4 w-4" />}
+                />
+
+                <DzIconButton
+                  onClick={() => removeItem(item.id)}
+                  icon={<Trash2 className="h-4 w-4 text-red-500" />}
+                />
               </div>
               <div className="text-right">
                 {item.discount ? (
@@ -96,7 +124,6 @@ export default function CurrentOrder({ items }: CurrentOrderProps) {
           ))}
         </div>
 
-        {/* Totals */}
         <div className="space-y-1 text-sm mt-4">
           <div className="flex justify-between">
             <span>Subtotal</span>
@@ -117,7 +144,6 @@ export default function CurrentOrder({ items }: CurrentOrderProps) {
           </div>
         </div>
 
-        {/* Payment Methods */}
         <div className="grid grid-cols-4 gap-2 mt-4">
           <Button variant="outline">UPI</Button>
           <Button variant="outline">Card</Button>
@@ -125,7 +151,6 @@ export default function CurrentOrder({ items }: CurrentOrderProps) {
           <Button variant="outline">Wallet</Button>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-2 mt-4">
           <Button variant="outline" className="flex-1">
             Save

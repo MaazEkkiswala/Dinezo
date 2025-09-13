@@ -1,15 +1,14 @@
-import { IconUser } from '@tabler/icons-react'
-import LoginBackground from '../../assets/top-view-table-full-food.jpg'
-import { Card, CardContent, CardHeader } from '@renderer/components/ui/card'
-import { Form } from '@renderer/components/ui/form'
+import DzButton from '@renderer/components/dzButton'
 import DzFormInput from '@renderer/components/form/dzFormInput'
 import DzInputPasswordField from '@renderer/components/form/dzFormPasswordInput'
+import { Card, CardContent, CardHeader } from '@renderer/components/ui/card'
+import { Form } from '@renderer/components/ui/form'
 import { Label } from '@renderer/components/ui/label'
-import DzButton from '@renderer/components/dzButton'
-import z from 'zod'
-import { useState } from 'react'
-import useFormState from '@renderer/hooks/useFormState'
 import AppUtils from '@renderer/helpers/appUtils'
+import useFormState from '@renderer/hooks/useFormState'
+import { useState } from 'react'
+import z from 'zod'
+import LoginBackground from '../../assets/top-view-table-full-food.jpg'
 
 const formSchema = z.object({
   emailAddress: z.email('Email address must be valid.'),
