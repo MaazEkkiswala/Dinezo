@@ -45,7 +45,7 @@ export default function Header() {
   return (
     <>
       <header className="flex w-full h-16 flex-row shadow-md bg-white justify-between items-center top-0 fixed px-4">
-        <Label className="text-2xl text-violet-500 font-mono">Logo</Label>
+        <Label className="text-2xl text-primary-500 font-mono">Logo</Label>
 
         <div className="flex flex-row items-center space-x-2.5">
           {map(menus, (menu: IMenu) => (

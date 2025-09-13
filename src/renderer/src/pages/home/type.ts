@@ -10,3 +10,8 @@ export interface MenuItem {
   img: string
   category: string
 }
+
+export interface OrderItem extends MenuItem {
+  qty: number
+  discount?: number
+}
