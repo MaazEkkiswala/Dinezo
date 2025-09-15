@@ -11,17 +11,32 @@ import CurrentOrder from './order/currentOrder'
 import { IMenuItem, IOrderItem } from './type'
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('Best seller menu')
+  const [selectedCategory, setSelectedCategory] = useState<number>(1)
   const [cart, setCart] = useState<IOrderItem[]>([])
   const [search, setSearch] = useState<string>('')
+  const [selectedSizeMap, setSelectedSizeMap] = useState<Record<number, string>>({})
+  // uncomment when call API to get menuItems
+  // const [menuItems, setMenuItems] = useState<IMenuItem[]>([])
 
-  const toggleAdd = (item: IMenuItem) => {
+  const toggleAdd = (item: IMenuItem, selectedSize: string) => {
     setCart((prev) => {
-      const exists = prev.find((i) => i.id === item.id)
+      const exists = prev.find((i) => i.id === item.id && i.selectedSize === selectedSize)
+
       if (exists) {
-        return prev.filter((i) => i.id !== item.id)
+        // remove if exists
+        return prev.filter((i) => !(i.id === item.id && i.selectedSize === selectedSize))
       } else {
-        return [...prev, { ...item, qty: 1 }]
+        // find price for selected size
+        const selectedUom = item.uom.find((u) => u.size === selectedSize)
+        return [
+          ...prev,
+          {
+            ...item,
+            qty: 1,
+            selectedSize,
+            selectedPrice: selectedUom ? selectedUom.price : item.uom[0].price
+          }
+        ]
       }
     })
   }
@@ -29,7 +44,7 @@ export default function Home() {
   const filteredItems: IMenuItem[] = menuItems.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) &&
-      (selectedCategory === 'Best seller menu' || item.category === selectedCategory)
+      (selectedCategory === 1 || item.category === selectedCategory)
   )
 
   return (
@@ -56,7 +71,7 @@ export default function Home() {
             <DzButton
               key={cat.id}
               label={cat.name}
-              onClick={() => setSelectedCategory(cat.name)}
+              onClick={() => setSelectedCategory(cat.id)}
               className="px-4 py-2 rounded-lg text-sm font-medium"
             />
           ))}
@@ -66,6 +81,9 @@ export default function Home() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {filteredItems.map((item) => {
             const inCart = cart.some((c) => c.id === item.id)
+
+            const selectedSize = selectedSizeMap[item.id] || 'S'
+            const selectedUom = item.uom.find((u) => u.size === selectedSize) || item.uom[0]
             return (
               <div
                 key={item.id}
@@ -74,26 +92,44 @@ export default function Home() {
                 <img src={item.img} alt={item.name} className="w-full h-48 object-cover" />
                 <div className="p-4">
                   <h3 className="font-semibold">{item.name}</h3>
-                  <p className="text-gray-600">₹{item.price}.00</p>
+                  <p className="text-gray-600">₹{selectedUom.price}.00</p>
 
-                  {/* Sizes */}
                   <div className="flex gap-2 mt-3">
-                    {['S', 'M', 'L'].map((size) => (
+                    {item.uom.map((sizeObj) => (
                       <DzButton
-                        label={size}
-                        key={size}
-                        className="px-2 py-1 border rounded text-xs bg-primary-600 text-white"
+                        label={sizeObj.size}
+                        key={sizeObj.size}
+                        onClick={() => {
+                          setSelectedSizeMap((prev) => ({ ...prev, [item.id]: sizeObj.size }))
+
+                          setCart((prev) =>
+                            prev.map((cartItem) =>
+                              cartItem.id === item.id
+                                ? {
+                                    ...cartItem,
+                                    selectedSize: sizeObj.size,
+                                    selectedPrice: sizeObj.price
+                                  }
+                                : cartItem
+                            )
+                          )
+                        }}
+                        className={`px-2 py-1 border rounded text-xs ${
+                          selectedSize === sizeObj.size
+                            ? 'bg-primary-600 text-white'
+                            : 'border-primary-600 text-black bg-white hover:bg-primary-400'
+                        }`}
                       />
                     ))}
                   </div>
 
-                  {/* Add / Remove Button */}
                   <DzButton
-                    onClick={() => toggleAdd(item)}
-                    className={`mt-3 w-full py-2 rounded-lg font-medium ${inCart
-                      ? 'bg-primary-600 text-white'
-                      : 'border border-primary-600 text-black bg-white hover:bg-primary-400'
-                      }`}
+                    onClick={() => toggleAdd(item, selectedSize)}
+                    className={`mt-3 w-full py-2 rounded-lg font-medium ${
+                      inCart
+                        ? 'bg-primary-600 text-white'
+                        : 'border border-primary-600 text-black bg-white hover:bg-primary-400'
+                    }`}
                     label={inCart ? 'Added' : 'Add'}
                   />
                 </div>

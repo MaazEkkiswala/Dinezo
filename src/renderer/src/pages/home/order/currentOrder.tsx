@@ -11,6 +11,8 @@ import { Tabs, TabsList, TabsTrigger } from '@renderer/components/ui/tabs'
 import { cloneDeep, filter, findIndex, reduce } from 'lodash'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { IOrderItem } from '../type'
+import { AutoComplete } from '@renderer/components/dzAutocomplete'
+import { dummyCustomers } from '../data/customerData'
 
 interface ICurrentOrderProps {
   items: IOrderItem[]
@@ -21,6 +23,10 @@ interface ICurrentOrderProps {
 export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps) {
   const [orderItems, setOrderItems] = useState(items)
   // const [customerName, setCustomerName] = useState('')
+  const customerOptions = dummyCustomers.map((c) => ({
+    value: c.id.toString(),
+    label: `${c.name} (${c.mobile})`
+  }))
 
   const updateQty = (id: number, change: number) => {
     const _orderItems = cloneDeep(orderItems)
@@ -40,6 +46,7 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
   }
 
   useEffect(() => {
+    console.log('Items-------------', items)
     setOrderItems(items)
   }, [items])
 
@@ -47,7 +54,7 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
     const { subtotal, totalDiscount } = reduce(
       orderItems,
       (acc: any, currentItem: IOrderItem) => {
-        acc.subtotal += currentItem.price * currentItem.qty
+        acc.subtotal += currentItem.selectedPrice * currentItem.qty
         acc.totalDiscount += (currentItem.discount ?? 0) * currentItem.qty
 
         return acc
@@ -73,11 +80,15 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
       </CardHeader>
       <CardContent className="flex flex-col gap-4 flex-grow overflow-y-auto">
         {/* Customer name input */}
-        {/* <Input
-          placeholder="Customer name"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-        /> */}
+        <AutoComplete
+          placeholder="Select Customer"
+          options={customerOptions}
+          // value={formValues.customerId as any}
+          emptyMessage="No Customer found"
+          // returnValue="id"
+          onValueChange={(value) => {}}
+          // errorMessage={form.formState.errors?.financeId?.message}
+        />
 
         <Tabs defaultValue="dinein" className="w-full">
           <TabsList className="grid grid-cols-2 w-full">
@@ -88,10 +99,10 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
 
         <div className="space-y-4">
           {orderItems.map((item) => (
-            <div key={item.id} className="flex justify-between items-center border-b pb-2">
+            <div key={item.id} className="grid grid-cols-3 items-center border-b pb-2 gap-2">
               <div>
-                <Label className="font-medium">{item.name}</Label>
-                <Label className="text-xs text-gray-500">₹{item.price} each</Label>
+                <Label className="font-medium truncate block max-w-full">{item.name}</Label>
+                <Label className="text-xs text-gray-500">₹{item.selectedPrice} each</Label>
               </div>
               <div className="flex items-center gap-2">
                 <DzIconButton
@@ -108,16 +119,17 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
                 />
 
                 <DzIconButton
+                  variant="ghost"
                   onClick={() => removeItem(item.id)}
                   icon={<Trash2 className="h-4 w-4 text-red-500" />}
                 />
               </div>
-              <div className="text-right">
+              <div className="justify-self-end text-right">
                 {item.discount ? (
                   <Label className="text-success-600 text-xs">-₹{item.discount * item.qty}</Label>
                 ) : null}
                 <Label className="font-semibold">
-                  ₹{item.qty * item.price - (item.discount ?? 0) * item.qty}
+                  ₹{item.qty * item.selectedPrice - (item.discount ?? 0) * item.qty}
                 </Label>
               </div>
             </div>
@@ -131,7 +143,7 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
           </div>
           <div className="flex justify-between">
             <span>Tax (18%)</span>
-            <span>₹{tax.toFixed(0)}</span>
+            <span>₹{tax.toFixed(3)}</span>
           </div>
           <div className="flex justify-between text-green-600">
             <span>Discount</span>
@@ -140,7 +152,7 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
           <Separator />
           <div className="flex justify-between font-bold text-lg">
             <span>Total</span>
-            <span>₹{grandTotal.toFixed(0)}</span>
+            <span>₹{grandTotal.toFixed(3)}</span>
           </div>
         </div>
 

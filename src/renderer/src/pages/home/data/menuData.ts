@@ -1,9 +1,9 @@
-import { Category, MenuItem } from '../type'
 import FriedRiceImage from '../../../assets/american-shrimp-fried-rice-served-with-chili-fish-sauce-thai-food.jpg'
 import SandWitchImage from '../../../assets/side-view-club-sandwich-with-salted-cucumbers-lemon-olives-round-white-plate.jpg'
 import PizzaImage from '../../../assets/crispy-mixed-pizza-with-olives-sausage.jpg'
+import { ICategory, IMenuItem } from '../type'
 
-export const categories: Category[] = [
+export const categories: ICategory[] = [
   { id: 1, name: 'Best seller menu' },
   { id: 2, name: 'Pizza' },
   { id: 3, name: 'Burger' },
@@ -11,33 +11,85 @@ export const categories: Category[] = [
   { id: 5, name: 'Ice cream' }
 ]
 
-export const menuItems: MenuItem[] = [
+export const menuItems: IMenuItem[] = [
   {
     id: 1,
     name: 'Fried Rice',
-    price: 499,
+    uom: [
+      {
+        size: 'S',
+        price: 200
+      },
+      {
+        size: 'M',
+        price: 250
+      },
+      {
+        size: 'L',
+        price: 400
+      }
+    ],
     img: FriedRiceImage,
-    category: 'Rice bowl'
+    category: 4
   },
   {
     id: 2,
     name: 'Grilled Salmon',
-    price: 499,
+    uom: [
+      {
+        size: 'S',
+        price: 200
+      },
+      {
+        size: 'M',
+        price: 250
+      },
+      {
+        size: 'L',
+        price: 400
+      }
+    ],
     img: SandWitchImage,
-    category: 'Best seller menu'
+    category: 1
   },
   {
     id: 3,
     name: 'Chicken Salad',
-    price: 499,
+    uom: [
+      {
+        size: 'S',
+        price: 200
+      },
+      {
+        size: 'M',
+        price: 250
+      },
+      {
+        size: 'L',
+        price: 400
+      }
+    ],
     img: PizzaImage,
-    category: 'Best seller menu'
+    category: 1
   },
   {
     id: 4,
     name: 'Pizza Margherita',
-    price: 499,
+    uom: [
+      {
+        size: 'S',
+        price: 200
+      },
+      {
+        size: 'M',
+        price: 250
+      },
+      {
+        size: 'L',
+        price: 400
+      }
+    ],
     img: PizzaImage,
-    category: 'Pizza'
+    category: 2
   }
 ]
