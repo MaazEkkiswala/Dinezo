@@ -6,12 +6,26 @@ export interface ICategory {
 export interface IMenuItem {
   id: number
   name: string
-  price: number
+  uom: {
+    size: string
+    price: number
+  }[]
   img: string
-  category: string
+  category: number
 }
 
 export interface IOrderItem extends IMenuItem {
   qty: number
   discount?: number
+  selectedSize: string
+  selectedPrice: number
+}
+
+export interface ICustomer {
+  id: number
+  name: string
+  mobile: string
+  email: string
+  gender: 'Male' | 'Female' | 'Other'
+  birthday: string // ISO date format
 }

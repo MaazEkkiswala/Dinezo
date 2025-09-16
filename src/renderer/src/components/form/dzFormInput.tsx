@@ -9,6 +9,8 @@ interface IDzFormInput extends ComponentProps<'input'> {
   required?: boolean
   label?: string | null
   placeholder?: string
+  labelClassName?: string
+  className?: string
 }
 
 export default function DzFormInput({
@@ -16,18 +18,25 @@ export default function DzFormInput({
   name,
   label = null,
   placeholder = '',
-  required = false
+  required = false,
+  labelClassName,
+  className
 }: IDzFormInput) {
   return (
     <div className="flex flex-col space-y-1 w-full">
-      <DzFormLabel label={label} required={required} />
+      <DzFormLabel label={label} required={required} className={labelClassName} />
       <FormField
         control={control}
         name={name}
         render={({ field }) => (
           <FormItem className="w-full">
             <FormControl className="w-full">
-              <Input placeholder={placeholder} {...field} required={required} />
+              <Input
+                placeholder={placeholder}
+                {...field}
+                required={required}
+                className={className}
+              />
             </FormControl>
             <FormMessage className="text-xs" />
           </FormItem>

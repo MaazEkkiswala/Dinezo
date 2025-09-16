@@ -7,7 +7,7 @@ export default function DefaultLayout() {
     <AuthGuard>
       <Header />
 
-      <main className="bg-gray-50 flex-grow h-screen">
+      <main className="bg-gray-50 flex-grow">
         <Outlet />
       </main>
     </AuthGuard>

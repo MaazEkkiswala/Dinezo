@@ -66,7 +66,9 @@ export default function Header() {
             {new Date().toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}
           </Label>
           <Label>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Label>
-          PROFILE
+          <Label onClick={() => navigate('/user')} className="cursor-pointer text-blue-500">
+            PROFILE
+          </Label>
         </div>
       </header>
 

@@ -88,6 +88,7 @@ export default function Login() {
                 type="password"
                 placeholder="Enter password"
                 control={form.control}
+                inputClassNames={AppUtils.classNames('rounded-full')}
               />
 
               <div className="flex justify-between items-center text-sm">

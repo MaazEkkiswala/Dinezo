@@ -8,6 +8,7 @@ import ErrorBoundary from '@renderer/components/errorBoundary'
 import Invoices from '@renderer/pages/invoice'
 import Orders from '@renderer/pages/order'
 import Tables from '@renderer/pages/table'
+import Users from '@renderer/pages/user'
 
 const routes: any = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const routes: any = createBrowserRouter([
       {
         path: 'table',
         element: <Tables />
+      },
+      {
+        path: 'user',
+        element: <Users />
       }
     ]
   },
