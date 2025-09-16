@@ -11,6 +11,7 @@ import {
   DialogTitle
 } from './ui/dialog'
 import { Button } from './ui/button'
+import DzButton from './dzButton'
 
 interface CommonDialogProps {
   open: boolean
@@ -21,7 +22,9 @@ interface CommonDialogProps {
   onSubmit: () => void
   onCancel?: () => void
   cancelLabel?: string
+  cancelButtonClass?: string
   submitLabel?: string
+  submitButtonClass?: string
 }
 
 export function CommonDialog({
@@ -33,18 +36,15 @@ export function CommonDialog({
   onSubmit,
   onCancel,
   cancelLabel = 'Cancel',
-  submitLabel = 'Submit'
+  submitLabel = 'Submit',
+  cancelButtonClass,
+  submitButtonClass
 }: CommonDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg rounded-2xl">
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle>{title}</DialogTitle>
-          <DialogClose asChild>
-            <button className="rounded-full p-1 hover:bg-gray-100">
-              <X className="h-5 w-5" />
-            </button>
-          </DialogClose>
         </DialogHeader>
 
         {description && (
@@ -53,15 +53,21 @@ export function CommonDialog({
 
         <div className="py-4">{children}</div>
 
-        <DialogFooter className="flex justify-end gap-3">
+        <DialogFooter className="flex w-full items-center justify-center gap-3">
           <DialogClose asChild>
-            <Button variant="outline" onClick={onCancel}>
-              {cancelLabel}
-            </Button>
+            <DzButton
+              variant="outline"
+              onClick={onCancel}
+              label={cancelLabel}
+              className={`flex-1 ${cancelButtonClass}`} // each button takes equal space
+            />
           </DialogClose>
-          <Button type="submit" onClick={onSubmit}>
-            {submitLabel}
-          </Button>
+          <DzButton
+            type="submit"
+            onClick={onSubmit}
+            label={submitLabel}
+            className={`flex-1 ${submitButtonClass}`}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,10 +1,9 @@
 import { IconLoader2 } from '@tabler/icons-react'
+import { Button } from './ui/button'
 import { ComponentProps } from 'react'
 
-import { Button } from './ui/button'
-
 interface IDzIconButton extends ComponentProps<'button'> {
-  icon: any
+  icon: React.ReactNode // JSX element
   onClick: () => void
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
   size?: 'default' | 'sm' | 'lg' | 'icon'
