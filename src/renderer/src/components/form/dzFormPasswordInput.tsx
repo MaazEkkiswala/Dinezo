@@ -5,11 +5,13 @@ import { FormField, FormItem, FormMessage } from '../ui/form'
 
 import { cn } from '@renderer/lib/utils'
 import DzFormLabel from './dzFormLabel'
+import AppUtils from '@renderer/helpers/appUtils'
 
 interface IDzInputPasswordField extends ComponentProps<'input'> {
   control: any
   name: string
 
+  inputClassNames: string
   label?: string | null
   placeholder?: string
 }
@@ -19,6 +21,7 @@ export default function DzInputPasswordField({
   name,
   label = null,
   placeholder = '',
+  inputClassNames = '',
   ...props
 }: IDzInputPasswordField) {
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -42,7 +45,10 @@ export default function DzInputPasswordField({
             <input
               value={field.value}
               onChange={field.onChange}
-              className="outline-none placeholder:text-muted-foreground font-sans"
+              className={AppUtils.classNames(
+                'outline-none grow placeholder:text-muted-foreground font-sans',
+                inputClassNames
+              )}
               type={showPassword ? 'text' : 'password'}
               placeholder={placeholder}
               {...props}
