@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router'
+
 import AuthGuard from '../guard/authGuard'
 import Header from '../header'
 
@@ -7,7 +8,7 @@ export default function DefaultLayout() {
     <AuthGuard>
       <Header />
 
-      <main className="bg-gray-50 flex-grow">
+      <main className="flex grow">
         <Outlet />
       </main>
     </AuthGuard>

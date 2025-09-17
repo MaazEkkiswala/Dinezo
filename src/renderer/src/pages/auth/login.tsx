@@ -5,22 +5,35 @@ import { Card, CardContent, CardHeader } from '@renderer/components/ui/card'
 import { Form } from '@renderer/components/ui/form'
 import { Label } from '@renderer/components/ui/label'
 import AppUtils from '@renderer/helpers/appUtils'
+import constants from '@renderer/helpers/constants'
 import useFormState from '@renderer/hooks/useFormState'
+import ApiService, { ApiUrls } from '@renderer/services/apiClient'
+import useAuthStore from '@renderer/stores/auth'
 import { useState } from 'react'
 import z from 'zod'
 import LoginBackground from '../../assets/top-view-table-full-food.jpg'
 
 const formSchema = z.object({
   emailAddress: z.email('Email address must be valid.'),
-  password: z.string().min(8, {
-    message: 'Password mus be contained at least 8 characters.'
-  })
+  password: z
+    .string({
+      error: 'Password cannot be empty.'
+    })
+    .min(8, {
+      message: 'Password mus be contained at least 8 characters.'
+    })
 })
 
 export default function Login() {
+  const { authActions } = useAuthStore()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { form, formValues, resetForm, setServerErrors } = useFormState({
-    schema: formSchema
+  const { form } = useFormState({
+    schema: formSchema,
+    defaultValues: {
+      emailAddress: 'hamid@dinezo.com',
+      password: 'Ddd@#123321'
+    }
   })
 
   const backgroundStyle = {
@@ -32,22 +45,23 @@ export default function Login() {
     setIsSubmitting(true)
 
     const payload: any = {
-      ...values
+      usr: values.emailAddress,
+      pwd: values.password
     }
 
-    // const { data, errors }: any = await ApiService.post(ApiUrls.login, payload);
-    // if (data) {
-    //   dispatch(login(data));
-    //   if (data.user?.preferenceId) {
-    //     dispatch(setUserPreference(data.user.preferenceId));
-    //   }
+    const { data }: any = await ApiService.post(ApiUrls.login, payload)
+    if (data) {
+      const { user_details: user, token } = data
 
-    //   router.push("/home");
-    // }
-    //   else if (errors) {
-    //         setServerErrors(errors);
-    //     }
-    // }
+      authActions.setInitData({ user })
+      authActions.setIsLogin(true)
+      authActions.setSessionToken(token)
+
+      AppUtils.setValueToLocalStorage(
+        constants.localstorageKey.authKey,
+        JSON.stringify({ user, token })
+      )
+    }
 
     setIsSubmitting(false)
   }
@@ -68,7 +82,7 @@ export default function Login() {
           <div className="mb-6 text-center">
             <h2 className="text-2xl font-bold">Login form</h2>
             <p className="text-gray-500 text-sm mt-2">
-              Lorem Ipsum has been the industry's standard dummy text ever since.
+              Lorem Ipsum has been the industry/&rsquo;s standard dummy text ever since.
             </p>
           </div>
 

@@ -8,14 +8,14 @@ interface IAuthGuard {
   children: any
 }
 
-export default function AuthGuard({ children }: IAuthGuard) {
+export default function GuestGuard({ children }: IAuthGuard) {
   const navigate = useNavigate()
 
   const { isLogin } = useAuthStore()
 
   useEffect(() => {
-    if (isNil(isLogin) && !isLogin) {
-      navigate('/login', { replace: true })
+    if (!isNil(isLogin) && isLogin) {
+      navigate('/', { replace: true })
     }
   }, [isLogin])
 

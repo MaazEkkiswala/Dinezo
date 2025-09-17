@@ -9,6 +9,7 @@ import Invoices from '@renderer/pages/invoice'
 import Orders from '@renderer/pages/order'
 import Tables from '@renderer/pages/table'
 import Users from '@renderer/pages/user'
+import GuestGuard from '@renderer/components/guard/guestGuard'
 
 const routes: any = createBrowserRouter([
   {
@@ -46,7 +47,11 @@ const routes: any = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Login />,
+    element: (
+      <GuestGuard>
+        <Login />
+      </GuestGuard>
+    ),
     errorElement: <ErrorBoundary />
   }
 ])

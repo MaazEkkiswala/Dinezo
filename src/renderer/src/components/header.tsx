@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { Label } from './ui/label'
 import {
   IconCalendarWeekFilled,
@@ -7,8 +7,9 @@ import {
   IconListCheck,
   IconSmartHome
 } from '@tabler/icons-react'
-import { map } from 'lodash'
+import { first, map } from 'lodash'
 import { useNavigate } from 'react-router'
+import AppUtils from '@renderer/helpers/appUtils'
 
 interface IMenu {
   icon: ReactNode
@@ -42,6 +43,13 @@ const menus: IMenu[] = [
 export default function Header() {
   const navigate = useNavigate()
 
+  const [selectedMenu, setSelectedMenu] = useState<IMenu>(first(menus) as any)
+
+  const _navigateTo = (menu: IMenu) => {
+    navigate(menu.to)
+    setSelectedMenu(menu)
+  }
+
   return (
     <>
       <header className="flex w-full h-16 flex-row shadow-md bg-white justify-between items-center top-0 fixed px-4">
@@ -50,9 +58,9 @@ export default function Header() {
         <div className="flex flex-row items-center space-x-2.5">
           {map(menus, (menu: IMenu) => (
             <div
-              onClick={() => navigate(menu.to)}
+              onClick={() => _navigateTo(menu)}
               key={menu.name}
-              className="flex flex-row space-x-2 items-center cursor-pointer"
+              className={AppUtils.classNames("flex flex-row space-x-2 items-center cursor-pointer", selectedMenu.to === menu.to ? 'text-primary-400' : '')}
             >
               {menu.icon}
 
