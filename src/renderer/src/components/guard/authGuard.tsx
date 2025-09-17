@@ -11,21 +11,21 @@ interface IAuthGuard {
 export default function AuthGuard({ children }: IAuthGuard) {
   const navigate = useNavigate()
 
-  const { isLogin } = useAuthStore()
+  // const { isLogin } = useAuthStore()
 
-  useEffect(() => {
-    if (isNil(isLogin) && !isLogin) {
-      navigate('/login', { replace: true })
-    }
-  }, [isLogin])
+  // useEffect(() => {
+  //   if (isNil(isLogin) && !isLogin) {
+  //     navigate('/login', { replace: true })
+  //   }
+  // }, [isLogin])
 
-  if (isNil(isLogin)) {
-    return (
-      <div className="flex grow justify-center items-center h-screen">
-        <Loader2 size={32} className="text-primary-500 animate-spin" />
-      </div>
-    )
-  }
+  // if (isNil(isLogin)) {
+  //   return (
+  //     <div className="flex grow justify-center items-center h-screen">
+  //       <Loader2 size={32} className="text-primary-500 animate-spin" />
+  //     </div>
+  //   )
+  // }
 
   return children
 }

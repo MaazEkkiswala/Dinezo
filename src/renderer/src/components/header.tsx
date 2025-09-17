@@ -1,11 +1,14 @@
 import { ReactNode, useState } from 'react'
 import { Label } from './ui/label'
 import {
+  IconBell,
   IconCalendarWeekFilled,
   IconFileInvoice,
-  IconHome,
   IconListCheck,
-  IconSmartHome
+  IconMessages,
+  IconPhone,
+  IconSmartHome,
+  IconToolsKitchen3
 } from '@tabler/icons-react'
 import { first, map } from 'lodash'
 import { useNavigate } from 'react-router'
@@ -19,22 +22,22 @@ interface IMenu {
 
 const menus: IMenu[] = [
   {
-    icon: <IconSmartHome />,
+    icon: <IconSmartHome className="h-8 w-8" />,
     name: 'Home',
     to: '/'
   },
   {
-    icon: <IconHome />,
+    icon: <IconToolsKitchen3 className="h-8 w-8" />,
     name: 'Table',
     to: '/table'
   },
   {
-    icon: <IconListCheck />,
+    icon: <IconListCheck className="h-8 w-8" />,
     name: 'Order List',
     to: '/orders'
   },
   {
-    icon: <IconFileInvoice />,
+    icon: <IconFileInvoice className="h-8 w-8" />,
     name: 'Invoice',
     to: '/invoices'
   }
@@ -60,20 +63,36 @@ export default function Header() {
             <div
               onClick={() => _navigateTo(menu)}
               key={menu.name}
-              className={AppUtils.classNames("flex flex-row space-x-2 items-center cursor-pointer", selectedMenu.to === menu.to ? 'text-primary-400' : '')}
+              className={AppUtils.classNames(
+                'flex flex-row space-x-2 items-center cursor-pointer',
+                selectedMenu.to === menu.to ? 'text-primary-400' : 'text-secondary-400'
+              )}
             >
               {menu.icon}
 
-              <Label>{menu.name}</Label>
+              <Label className="text-md cursor-pointer">{menu.name}</Label>
             </div>
           ))}
         </div>
-        <div className="flex flex-row gap-2">
-          <IconCalendarWeekFilled />
-          <Label>
-            {new Date().toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}
-          </Label>
-          <Label>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Label>
+        <div className="flex flex-row space-x-8">
+          <div className="flex flex-row leading-tight text-right">
+            <IconCalendarWeekFilled className="text-secondary-400" />
+            <Label className="m-2 text-secondary-400">
+              {new Date().toLocaleDateString([], {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              })}
+            </Label>
+            <Label className="mr-2 text-secondary-400">
+              {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Label>
+          </div>
+          <div className="flex flex-row items-center space-x-4 text-secondary-400">
+            <IconPhone className="cursor-pointer hover:text-primary-500" />
+            <IconMessages className="cursor-pointer hover:text-primary-500" />
+            <IconBell className="cursor-pointer hover:text-primary-500" />
+          </div>
           <Label onClick={() => navigate('/user')} className="cursor-pointer text-blue-500">
             PROFILE
           </Label>
