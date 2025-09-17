@@ -23,7 +23,7 @@ export default function BestTipsCard() {
   }, [])
 
   return (
-    <Card className="w-full shadow-md rounded-2xl border border-blue-300">
+    <Card className="w-full shadow-md rounded-2xl border ">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Best Tips</CardTitle>
       </CardHeader>

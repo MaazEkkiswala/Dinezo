@@ -1,4 +1,4 @@
-import { CommonDialog } from '@renderer/components/dzCommonDialog'
+import { DzCustomDialog } from '@renderer/components/dzCommonDialog'
 import DzIconButton from '@renderer/components/dzIconButton'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@renderer/components/ui/avatar'
@@ -144,7 +144,7 @@ export default function Users() {
           </div>
         </div>
       </div>
-      <CommonDialog
+      <DzCustomDialog
         open={openLogoutDialog}
         onOpenChange={setOpenLogoutDialog}
         title=""
@@ -171,7 +171,7 @@ export default function Users() {
           <h2 className="text-2xl font-bold text-black">Log Out?</h2>
           <p className="text-gray-500 text-sm">Are you sure want to log out?</p>
         </div>
-      </CommonDialog>
+      </DzCustomDialog>
     </div>
   )
 }

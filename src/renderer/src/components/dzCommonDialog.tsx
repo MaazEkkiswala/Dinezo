@@ -13,7 +13,7 @@ import {
 import { Button } from './ui/button'
 import DzButton from './dzButton'
 
-interface CommonDialogProps {
+interface ICustomDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
@@ -27,7 +27,7 @@ interface CommonDialogProps {
   submitButtonClass?: string
 }
 
-export function CommonDialog({
+export function DzCustomDialog({
   open,
   onOpenChange,
   title,
@@ -39,7 +39,7 @@ export function CommonDialog({
   submitLabel = 'Submit',
   cancelButtonClass,
   submitButtonClass
-}: CommonDialogProps) {
+}: ICustomDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg rounded-2xl">

@@ -58,7 +58,7 @@ export default function Header() {
       <header className="flex w-full h-16 flex-row shadow-md bg-white justify-between items-center top-0 fixed px-4">
         <Label className="text-2xl text-primary-500 font-mono">Logo</Label>
 
-        <div className="flex flex-row items-center space-x-2.5">
+        <div className="flex flex-row items-center gap-3">
           {map(menus, (menu: IMenu) => (
             <div
               onClick={() => _navigateTo(menu)}
@@ -74,7 +74,7 @@ export default function Header() {
             </div>
           ))}
         </div>
-        <div className="flex flex-row space-x-8">
+        <div className="flex flex-row gap-3">
           <div className="flex flex-row leading-tight text-right">
             <IconCalendarWeekFilled className="text-secondary-400" />
             <Label className="m-2 text-secondary-400">
