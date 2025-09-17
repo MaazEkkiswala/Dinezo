@@ -47,12 +47,12 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
   const [orderItems, setOrderItems] = useState(items)
   const [openCustomerCreateDialog, setOpenCustomerCreateDialog] = useState<boolean>(false)
   const [birthdayDate, setBirthdayDate] = useState<Date | undefined>()
+  type CustomerFormValues = z.infer<typeof customerSchema>
   // const [customerName, setCustomerName] = useState('')
   const customerOptions = dummyCustomers.map((c) => ({
     value: c.id.toString(),
     label: `${c.name} (${c.mobile})`
   }))
-  type CustomerFormValues = z.infer<typeof customerSchema>
 
   const form = useForm<CustomerFormValues>({
     resolver: zodResolver(customerSchema),
@@ -211,6 +211,8 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
           <Button variant="outline" className="flex-1">
             Pay Later
           </Button>
+
+          {/* Custom Dialog starts from here */}
           <DzCustomDialog
             open={openCustomerCreateDialog}
             onOpenChange={setOpenCustomerCreateDialog}
