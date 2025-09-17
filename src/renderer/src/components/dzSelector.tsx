@@ -30,7 +30,7 @@ interface ISsSelector {
   onValueChange?(value: string): any
 }
 
-export function SsSelector({
+export function DzSelector({
   placeholder,
   selectorClass,
   optionLabel,

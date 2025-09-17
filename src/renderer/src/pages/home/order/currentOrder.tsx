@@ -13,20 +13,54 @@ import { Minus, Plus, Trash2 } from 'lucide-react'
 import { IOrderItem } from '../type'
 import { AutoComplete } from '@renderer/components/dzAutocomplete'
 import { dummyCustomers } from '../data/customerData'
+import UPIImage from '../../../assets/upi.png'
+import WalletImage from '../../../assets/wallet.png'
+import CashImage from '../../../assets/payment-method.png'
+import CardImage from '../../../assets/atm-card.png'
+import { IconPlus } from '@tabler/icons-react'
+import { DzCustomDialog } from '@renderer/components/dzCommonDialog'
+import { Form } from '@renderer/components/ui/form'
+import DzFormInput from '@renderer/components/form/dzFormInput'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import z from 'zod'
+import { DzSelector } from '@renderer/components/dzSelector'
+import { DzDatePickerWithLabel } from '@renderer/components/dzDatePickerWithLabel'
 
 interface ICurrentOrderProps {
   items: IOrderItem[]
-
   onCartChange: (cart: IOrderItem[]) => void
 }
 
+const genderOptions = [
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
+  { label: 'Other', value: 'other' }
+]
+
+const customerSchema = z.object({
+  name: z.string().min(3, 'Subject must be at least 3 characters long'),
+  email: z.email('Email address must be valid.').min(1, 'Email must be required')
+})
+
 export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps) {
   const [orderItems, setOrderItems] = useState(items)
+  const [openCustomerCreateDialog, setOpenCustomerCreateDialog] = useState<boolean>(false)
+  const [birthdayDate, setBirthdayDate] = useState<Date | undefined>()
   // const [customerName, setCustomerName] = useState('')
   const customerOptions = dummyCustomers.map((c) => ({
     value: c.id.toString(),
     label: `${c.name} (${c.mobile})`
   }))
+  type CustomerFormValues = z.infer<typeof customerSchema>
+
+  const form = useForm<CustomerFormValues>({
+    resolver: zodResolver(customerSchema),
+    defaultValues: {
+      name: '',
+      email: ''
+    }
+  })
 
   const updateQty = (id: number, change: number) => {
     const _orderItems = cloneDeep(orderItems)
@@ -44,11 +78,6 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
     setOrderItems(_orderItems)
     onCartChange(_orderItems)
   }
-
-  useEffect(() => {
-    console.log('Items-------------', items)
-    setOrderItems(items)
-  }, [items])
 
   const { tax, grandTotal, subtotal, totalDiscount } = useMemo(() => {
     const { subtotal, totalDiscount } = reduce(
@@ -68,27 +97,36 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
     return { tax, grandTotal, subtotal, totalDiscount }
   }, [orderItems])
 
+  useEffect(() => {
+    setOrderItems(items)
+  }, [items])
+
   return (
     <Card className="w-full h-full rounded-2xl shadow-md flex flex-col">
       <CardHeader>
-        <CardTitle className="flex justify-between items-center">
-          Current Order
-          <Button size="icon" variant="secondary">
-            +
-          </Button>
-        </CardTitle>
+        <CardTitle className="flex justify-between items-center">Current Order</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 flex-grow overflow-y-auto">
-        {/* Customer name input */}
-        <AutoComplete
-          placeholder="Select Customer"
-          options={customerOptions}
-          // value={formValues.customerId as any}
-          emptyMessage="No Customer found"
-          // returnValue="id"
-          onValueChange={(value) => {}}
-          // errorMessage={form.formState.errors?.financeId?.message}
-        />
+        <div className="flex flex-row justify-between gap-2">
+          <AutoComplete
+            placeholder="Select Customer"
+            options={customerOptions}
+            // value={formValues.customerId as any}
+            emptyMessage="No Customer found"
+            // returnValue="id"
+            onValueChange={(value) => {}}
+            // errorMessage={form.formState.errors?.financeId?.message}
+          />
+          <DzIconButton
+            size="icon"
+            variant="default"
+            className="bg-primary-500 rounded-full hover:bg-primary-700"
+            icon={<IconPlus className="rounded-full" />}
+            onClick={() => {
+              setOpenCustomerCreateDialog(true)
+            }}
+          />
+        </div>
 
         <Tabs defaultValue="dinein" className="w-full">
           <TabsList className="grid grid-cols-2 w-full">
@@ -121,7 +159,7 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
                 <DzIconButton
                   variant="ghost"
                   onClick={() => removeItem(item.id)}
-                  icon={<Trash2 className="h-4 w-4 text-red-500" />}
+                  icon={<Trash2 className="h-4 w-4 text-error-500" />}
                 />
               </div>
               <div className="justify-self-end text-right">
@@ -156,21 +194,85 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-2 mt-4">
-          <Button variant="outline">UPI</Button>
-          <Button variant="outline">Card</Button>
-          <Button variant="outline">Cash</Button>
-          <Button variant="outline">Wallet</Button>
+        <div className="grid grid-cols-4 gap-4 mt-4 items-center justify-items-center">
+          <img src={UPIImage} alt="UPI Payment" className="w-12 h-10 object-contain" />
+          <img src={CardImage} alt="Card Payment" className="w-12 h-10 object-contain" />
+          <img src={CashImage} alt="Cash Payment" className="w-12 h-10 object-contain" />
+          <img src={WalletImage} alt="Wallet Payment" className="w-12 h-10 object-contain" />
         </div>
 
         <div className="flex gap-2 mt-4">
           <Button variant="outline" className="flex-1">
             Save
           </Button>
-          <Button className="flex-1">Pay</Button>
-          <Button variant="secondary" className="flex-1">
+          <Button variant="outline" className="flex-1">
+            Pay
+          </Button>
+          <Button variant="outline" className="flex-1">
             Pay Later
           </Button>
+          <DzCustomDialog
+            open={openCustomerCreateDialog}
+            onOpenChange={setOpenCustomerCreateDialog}
+            title="Customer Details"
+            description=""
+            onSubmit={() => {
+              setOpenCustomerCreateDialog(false)
+            }}
+            onCancel={() => {
+              setOpenCustomerCreateDialog(false)
+            }}
+            cancelLabel="Cancel"
+            submitLabel="Submit"
+            submitButtonClass="h-15 text-lg bg-primary-500 hover:bg-primary-600"
+            cancelButtonClass="h-15 text-lg border-primary-500 text-primary-500"
+          >
+            {/* Custom children content */}
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <Form {...form}>
+                <div className="flex flex-col gap-4 w-full">
+                  <DzFormInput
+                    control={form.control}
+                    name="name"
+                    placeholder="Customer name"
+                    label="Customer name"
+                    required
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <DzFormInput
+                      name="mobile"
+                      label="Mobile no"
+                      placeholder="Mobile no"
+                      control={form.control}
+                      required
+                    />
+                    <DzFormInput
+                      name="email"
+                      label="Email"
+                      placeholder="Enter email"
+                      control={form.control}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <DzSelector
+                      placeholder="Gender"
+                      optionLabel="Gender"
+                      options={genderOptions}
+                      onValueChange={(val) => console.log('Selected Gender:', val)}
+                    />
+                    <DzDatePickerWithLabel
+                      label="Birthday date"
+                      date={birthdayDate}
+                      onChange={setBirthdayDate}
+                    />
+                  </div>
+                </div>
+              </Form>
+            </div>
+          </DzCustomDialog>
         </div>
       </CardContent>
     </Card>

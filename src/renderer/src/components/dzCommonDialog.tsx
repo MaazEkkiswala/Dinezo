@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import { X } from 'lucide-react'
 import {
   Dialog,
   DialogClose,
@@ -10,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle
 } from './ui/dialog'
-import { Button } from './ui/button'
+
 import DzButton from './dzButton'
 
 interface ICustomDialogProps {

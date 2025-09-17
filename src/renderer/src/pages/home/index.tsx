@@ -49,7 +49,7 @@ export default function Home() {
 
   return (
     <div className="flex p-6 grow mx-auto gap-6">
-      <div className="p-6 w-[80%] mx-auto">
+      <div className="p-6 w-full mx-auto">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Label className="text-2xl font-bold mb-2">Choose Category</Label>
@@ -106,28 +106,30 @@ export default function Home() {
                             prev.map((cartItem) =>
                               cartItem.id === item.id
                                 ? {
-                                  ...cartItem,
-                                  selectedSize: sizeObj.size,
-                                  selectedPrice: sizeObj.price
-                                }
+                                    ...cartItem,
+                                    selectedSize: sizeObj.size,
+                                    selectedPrice: sizeObj.price
+                                  }
                                 : cartItem
                             )
                           )
                         }}
-                        className={`px-2 py-1 border rounded text-xs ${selectedSize === sizeObj.size
-                          ? 'bg-primary-600 text-white'
-                          : 'border-primary-600 text-black bg-white hover:bg-primary-400'
-                          }`}
+                        className={`px-2 py-1 border rounded text-xs ${
+                          selectedSize === sizeObj.size
+                            ? 'bg-primary-600 text-white'
+                            : 'border-primary-600 text-black bg-white hover:bg-primary-400'
+                        }`}
                       />
                     ))}
                   </div>
 
                   <DzButton
                     onClick={() => toggleAdd(item, selectedSize)}
-                    className={`mt-3 w-full py-2 rounded-lg font-medium ${inCart
-                      ? 'bg-primary-600 text-white'
-                      : 'border border-primary-600 text-black bg-white hover:bg-primary-400'
-                      }`}
+                    className={`mt-3 w-full py-2 rounded-lg font-medium ${
+                      inCart
+                        ? 'bg-primary-600 text-white'
+                        : 'border border-primary-600 text-black bg-white hover:bg-primary-400'
+                    }`}
                     label={inCart ? 'Added' : 'Add'}
                   />
                 </div>
@@ -138,7 +140,7 @@ export default function Home() {
       </div>
 
       {!isEmpty(cart) ? (
-        <div className="w-[25%]">
+        <div className="w-auto">
           <CurrentOrder items={cart} onCartChange={(_cart) => setCart(_cart)} />
         </div>
       ) : null}

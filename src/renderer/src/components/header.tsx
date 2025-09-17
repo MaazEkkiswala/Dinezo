@@ -3,7 +3,7 @@ import { Label } from './ui/label'
 import {
   IconBell,
   IconCalendarWeekFilled,
-  IconFileInvoice,
+  IconLicense,
   IconListCheck,
   IconMessages,
   IconPhone,
@@ -13,6 +13,14 @@ import {
 import { first, map } from 'lodash'
 import { useNavigate } from 'react-router'
 import AppUtils from '@renderer/helpers/appUtils'
+
+import z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form } from './ui/form'
+import DzFormInput from './form/dzFormInput'
+import DzFormTextArea from './form/dzFormTextArea'
+import { DzCustomDialog } from './dzCommonDialog'
 
 interface IMenu {
   icon: ReactNode
@@ -37,20 +45,40 @@ const menus: IMenu[] = [
     to: '/orders'
   },
   {
-    icon: <IconFileInvoice className="h-8 w-8" />,
+    icon: <IconLicense className="h-8 w-8" />,
     name: 'Invoice',
     to: '/invoices'
   }
 ]
 
+const supportSchema = z.object({
+  subject: z.string().min(3, 'Subject must be at least 3 characters long'),
+  message: z.string().min(10, 'Message must be at least 10 characters long')
+})
+
 export default function Header() {
   const navigate = useNavigate()
-
+  const [openSupportDialog, setOpenSupportDialog] = useState<boolean>(false)
   const [selectedMenu, setSelectedMenu] = useState<IMenu>(first(menus) as any)
+  type SupportFormValues = z.infer<typeof supportSchema>
 
   const _navigateTo = (menu: IMenu) => {
     navigate(menu.to)
     setSelectedMenu(menu)
+  }
+
+  const form = useForm<SupportFormValues>({
+    resolver: zodResolver(supportSchema),
+    defaultValues: {
+      subject: '',
+      message: ''
+    }
+  })
+
+  const handleSupportSubmit = (values: SupportFormValues) => {
+    console.log('Support Form Data:', values)
+    // need to call API here when support API is available
+    setOpenSupportDialog(false)
   }
 
   return (
@@ -90,13 +118,54 @@ export default function Header() {
           </div>
           <div className="flex flex-row items-center space-x-4 text-secondary-400">
             <IconPhone className="cursor-pointer hover:text-primary-500" />
-            <IconMessages className="cursor-pointer hover:text-primary-500" />
+            <IconMessages
+              className="cursor-pointer hover:text-primary-500"
+              onClick={() => setOpenSupportDialog(true)}
+            />
             <IconBell className="cursor-pointer hover:text-primary-500" />
           </div>
           <Label onClick={() => navigate('/user')} className="cursor-pointer text-blue-500">
             PROFILE
           </Label>
         </div>
+
+        <DzCustomDialog
+          open={openSupportDialog}
+          onOpenChange={setOpenSupportDialog}
+          title="Support Ticket"
+          description=""
+          onSubmit={() => {
+            setOpenSupportDialog(false)
+          }}
+          onCancel={() => {
+            setOpenSupportDialog(false)
+          }}
+          cancelLabel="Cancel"
+          submitLabel="Submit"
+          submitButtonClass="h-15 text-lg bg-primary-500 hover:bg-primary-600"
+          cancelButtonClass="h-15 text-lg border-primary-500 text-primary-500"
+        >
+          {/* Custom children content */}
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <Form {...form}>
+              <div className="flex flex-col gap-4 w-full">
+                <DzFormInput
+                  control={form.control}
+                  name="subject"
+                  placeholder="Enter subject"
+                  label="Subject"
+                  required
+                />
+                <DzFormTextArea
+                  control={form.control}
+                  name="message"
+                  placeholder="Enter your message"
+                  label="Message"
+                />
+              </div>
+            </Form>
+          </div>
+        </DzCustomDialog>
       </header>
 
       {/* Shadow to avoid overlapping in dom */}

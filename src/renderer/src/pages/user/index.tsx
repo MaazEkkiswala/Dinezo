@@ -1,8 +1,6 @@
 import { DzCustomDialog } from '@renderer/components/dzCommonDialog'
 import DzIconButton from '@renderer/components/dzIconButton'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@renderer/components/ui/avatar'
-
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { ChartConfig } from '@renderer/components/ui/chart'
 
@@ -38,7 +36,13 @@ const chartConfig = {
 
 export default function Users() {
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false)
-  const user = {}
+  const user = {
+    firstName: 'Hamid',
+    lastName: 'DineZo',
+    email: 'kevinshah@gmail.com',
+    phone: '+9190765432109',
+    joiningDate: '21 June 2024'
+  }
 
   return (
     <div className="flex flex-row w-full">
@@ -164,7 +168,7 @@ export default function Users() {
       >
         {/* Custom children content */}
         <div className="flex flex-col items-center justify-center text-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 bg-error-100 text-error-600 rounded-full flex items-center justify-center">
             <IconLogout className="w-8 h-8" />
           </div>
 
