@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import useAuthStore from '@renderer/stores/auth'
+import useToastStore from '@renderer/stores/toast'
 
-axios.defaults.baseURL = import.meta.env.API_BASE_URL
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
 axios.defaults.withCredentials = true
 
 // -------------------------------------------------------------- API Service Calls
@@ -70,7 +71,7 @@ async function deleteCall(url: string) {
 axios.interceptors.request.use(
   async (config) => {
     const accessToken: string = useAuthStore.getState().sessionToken as any
-    config.headers.Authorization = `Bearer ${accessToken}`
+    config.headers.Authorization = `Token ${accessToken}`
 
     return config
   },
@@ -91,42 +92,18 @@ axios.interceptors.response.use(
   },
   async (error: AxiosError) => {
     const data: any = await error.response?.data
-    const status = error.response?.status
-    if (status === axios.HttpStatusCode.UnprocessableEntity) {
-      return { data: null, errors: data.errors }
+
+    const { toastActions } = useToastStore.getState()
+
+    if (data?.exception) {
+      toastActions.show(data.exception)
+    } else if (data?.message) {
+      toastActions.show(data.message)
+    } else {
+      toastActions.show('Oops !!! something went wrong !!!')
     }
 
-    // const { show } = useToastStore.getState()
-
-    if (
-      [
-        axios.HttpStatusCode.InternalServerError,
-        axios.HttpStatusCode.NotFound,
-        axios.HttpStatusCode.BadRequest
-      ].includes(status as any)
-    ) {
-      // const message = AppUtils.getErrorMsgFromBadRequest(data.errors)
-
-      // show(message, 'error')
-      return { data: null }
-    }
-
-    if (status === axios.HttpStatusCode.UnprocessableEntity) {
-      return { data: null, errors: data.errors }
-    }
-
-    if (status === axios.HttpStatusCode.Forbidden) {
-      // const message = AppUtils.getErrorMsgFromBadRequest(data.errors)
-
-      // show(message, 'error')
-      return { data: null }
-    }
-
-    if (status === axios.HttpStatusCode.Unauthorized) {
-      return { data: null }
-    }
-
-    return { data: null, errors: data.errors }
+    return { data: null }
   }
 )
 
@@ -145,6 +122,6 @@ export default ApiService
 //#region
 export const ApiUrls = {
   // user
-  login: 'auth/login'
+  login: 'method/dinezo.api.os.auth.login'
 }
 //#endregion

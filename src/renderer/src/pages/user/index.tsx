@@ -86,7 +86,7 @@ export default function Users() {
 
   return (
     <>
-      <div className="flex flex-row w-full">
+      <div className="flex flex-row">
         <div className="m-4 p-4 grid grid-cols-12 grow">
           <div className="col-span-4 m-5">
             <Card>
@@ -204,17 +204,15 @@ export default function Users() {
               </Card>
             </div>
 
-            <div>
-              <ChartLineLinear
-                title="Line Chart - Linear"
-                description="January - December 2025"
-                data={chartData}
-                dataKey="desktop"
-                xKey="month"
-                chartConfig={chartConfig}
-                className="m-5 p-4"
-              />
-            </div>
+            <ChartLineLinear
+              title="Line Chart - Linear"
+              description="January - December 2025"
+              data={chartData}
+              dataKey="desktop"
+              xKey="month"
+              chartConfig={chartConfig}
+              className="m-5 p-4"
+            />
 
             <div className="m-5 grid grid-cols-2 gap-4">
               <TrendingDishesCard />
