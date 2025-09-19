@@ -71,8 +71,10 @@ async function deleteCall(url: string) {
 axios.interceptors.request.use(
   async (config) => {
     const accessToken: string = useAuthStore.getState().sessionToken as any
-    config.headers.Authorization = `Token ${accessToken}`
-
+    if (accessToken) {
+      config.headers.Authorization = `Token ${accessToken}`
+    }
+    config.headers['Content-Type'] = 'application/json'
     return config
   },
   (error) => {
@@ -83,12 +85,7 @@ axios.interceptors.request.use(
 // Response interceptor
 axios.interceptors.response.use(
   async (response: AxiosResponse): Promise<any> => {
-    if (response.data instanceof Blob) {
-      const { data } = response
-      return { data }
-    }
-
-    return response.data
+    return response
   },
   async (error: AxiosError) => {
     const data: any = await error.response?.data

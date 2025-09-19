@@ -7,7 +7,7 @@ import DzSearchInput from '@renderer/components/dzSearchInput'
 import { Label } from '@renderer/components/ui/label'
 import { isEmpty } from 'lodash'
 import { categories, menuItems } from './data/menuData'
-import CurrentOrder from './order/currentOrder'
+import CurrentOrder from '../../sections/home/currentOrder'
 import { IMenuItem, IOrderItem } from './type'
 
 export default function Home() {
