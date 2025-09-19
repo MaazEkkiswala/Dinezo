@@ -8,15 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/u
 import { Label } from '@renderer/components/ui/label'
 import { Separator } from '@renderer/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@renderer/components/ui/tabs'
-import { cloneDeep, filter, findIndex, reduce } from 'lodash'
+import { cloneDeep, filter, findIndex, map, reduce } from 'lodash'
 import { Minus, Plus, Trash2 } from 'lucide-react'
-import { IOrderItem } from '../type'
+import { IOrderItem } from '../../pages/home/type'
 import { AutoComplete } from '@renderer/components/dzAutocomplete'
-import { dummyCustomers } from '../data/customerData'
-import UPIImage from '../../../assets/upi.png'
-import WalletImage from '../../../assets/wallet.png'
-import CashImage from '../../../assets/payment-method.png'
-import CardImage from '../../../assets/atm-card.png'
+import { dummyCustomers } from '../../pages/home/data/customerData'
+import UPIImage from '../../assets/upi.png'
+import WalletImage from '../../assets/wallet.png'
+import CashImage from '../../assets/payment-method.png'
+import CardImage from '../../assets/atm-card.png'
 import { IconPlus } from '@tabler/icons-react'
 import { DzCustomDialog } from '@renderer/components/dzCommonDialog'
 import { Form } from '@renderer/components/ui/form'
@@ -26,6 +26,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
 import { DzSelector } from '@renderer/components/dzSelector'
 import { DzDatePickerWithLabel } from '@renderer/components/dzDatePickerWithLabel'
+import { dummyTables } from '@renderer/pages/home/data/tableData'
 
 interface ICurrentOrderProps {
   items: IOrderItem[]
@@ -49,6 +50,12 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
   const [birthdayDate, setBirthdayDate] = useState<Date | undefined>()
   type CustomerFormValues = z.infer<typeof customerSchema>
   // const [customerName, setCustomerName] = useState('')
+
+  const tableOptions = map(dummyTables, (table) => ({
+    label: `${table.tableNumber} | (${table.tableType}${table.isTerrace ? ' - Terrace' : ''})`,
+    value: table.id.toString()
+  }))
+
   const customerOptions = dummyCustomers.map((c) => ({
     value: c.id.toString(),
     label: `${c.name} (${c.mobile})`
@@ -127,6 +134,15 @@ export default function CurrentOrder({ items, onCartChange }: ICurrentOrderProps
             }}
           />
         </div>
+
+        <AutoComplete
+          placeholder="Select Table"
+          options={tableOptions}
+          emptyMessage="No Table found"
+          // returnValue="id"
+          onValueChange={(value) => {}}
+          // errorMessage={form.formState.errors?.financeId?.message}
+        />
 
         <Tabs defaultValue="dinein" className="w-full">
           <TabsList className="grid grid-cols-2 w-full">

@@ -50,6 +50,7 @@ export default function Login() {
     }
 
     const { data }: any = await ApiService.post(ApiUrls.login, payload)
+    console.log('data', data)
     if (data) {
       const { user_details: user, token } = data
 

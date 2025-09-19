@@ -29,3 +29,12 @@ export interface ICustomer {
   gender: 'Male' | 'Female' | 'Other'
   birthday: string // ISO date format
 }
+
+export interface ITable {
+  id: number
+  tableNumber: string
+  size: number
+  status: string // It will be Available/Reserved/Billed/Available Soon
+  tableType: string // It will be AC/Non AC
+  isTerrace: boolean
+}
