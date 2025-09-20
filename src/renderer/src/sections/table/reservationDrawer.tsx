@@ -186,12 +186,12 @@ export default function ReservationSheet({ open, onOpenChange }: ReservationShee
                   '3:00 PM',
                   '3:30 PM'
                 ].map((time) => (
-                  <button
+                  <DzButton
                     key={time}
+                    variant="outline"
                     className="border rounded-md px-3 py-2 text-sm hover:bg-primary-50 hover:border-primary-500"
-                  >
-                    {time}
-                  </button>
+                    label={time}
+                  />
                 ))}
               </div>
             </div>
@@ -212,12 +212,12 @@ export default function ReservationSheet({ open, onOpenChange }: ReservationShee
                   '11:30 PM',
                   '12:00 PM'
                 ].map((time) => (
-                  <button
+                  <DzButton
                     key={time}
+                    variant="outline"
                     className="border rounded-md px-3 py-2 text-sm hover:bg-primary-50 hover:border-primary-500"
-                  >
-                    {time}
-                  </button>
+                    label={time}
+                  />
                 ))}
               </div>
             </div>

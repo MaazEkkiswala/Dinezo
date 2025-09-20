@@ -11,12 +11,16 @@ axios.defaults.withCredentials = true
 async function post(url: string, data: any = null) {
   const config: AxiosRequestConfig = {
     url,
-    method: 'post'
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    }
   }
 
   if (data) {
     config.data = data
   }
+
   const result = await axios(config)
   return result
 }
@@ -72,9 +76,9 @@ axios.interceptors.request.use(
   async (config) => {
     const accessToken: string = useAuthStore.getState().sessionToken as any
     if (accessToken) {
-      config.headers.Authorization = `Token ${accessToken}`
+      config.headers.Authorization = `${accessToken}`
     }
-    config.headers['Content-Type'] = 'application/json'
+
     return config
   },
   (error) => {
@@ -119,6 +123,10 @@ export default ApiService
 //#region
 export const ApiUrls = {
   // user
-  login: 'method/dinezo.api.os.auth.login'
+  login: 'method/dinezo.api.os.auth.login',
+
+  //products
+  items_sync: 'method/dinezo.api.os.sync.get_items_sync',
+  items_group: 'method/dinezo.api.os.sync.get_items_group_sync'
 }
 //#endregion

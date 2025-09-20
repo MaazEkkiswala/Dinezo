@@ -1,24 +1,21 @@
-import { RouterProvider } from 'react-router'
-import routes from './routes'
-import DzToaster from './components/dzToaster'
 import { useEffect } from 'react'
-import useAuthStore from './stores/auth'
+import { RouterProvider } from 'react-router'
+
+import DzToaster from './components/dzToaster'
 import AppUtils from './helpers/appUtils'
 import constants from './helpers/constants'
-
-// window.electron.process.versions
+import routes from './routes'
+import useAuthStore from './stores/auth'
 
 function App(): React.JSX.Element {
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
   const { authActions } = useAuthStore()
 
   useEffect(() => {
-    initData();
+    initData()
   }, [])
 
   const initData = () => {
-    const _localAuthData = AppUtils.getValueFromStorage(constants.localstorageKey.authKey);
+    const _localAuthData = AppUtils.getValueFromStorage(constants.localstorageKey.authKey)
     if (!_localAuthData) {
       return authActions.setIsLogin(false)
     }
@@ -32,7 +29,6 @@ function App(): React.JSX.Element {
   return (
     <>
       <RouterProvider router={routes} />
-
       <DzToaster />
     </>
   )
